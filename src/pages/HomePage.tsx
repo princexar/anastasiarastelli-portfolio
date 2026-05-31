@@ -67,6 +67,20 @@ const FRED_ROBOSCOUT_PARAGRAPHS = [
 const hasProjectsContent =
   WEBXR_WORLD_STAGES.length > 0 || FRED_ROBOSCOUT_PARAGRAPHS.length > 0
 
+/** Video work — add entries with YouTube/Vimeo links or files in public/videos/ (e.g. `/videos/my-edit.mp4`). */
+const VIDEO_ITEMS: readonly { label: string; href: string; description?: string }[] = [
+  {
+    label: '"Birthday" Short Film',
+    href: 'https://youtu.be/NX1RNk5WvSs?si=Ans-jU0vzbmN4WaQ',
+    description: 'Directed, Written, and Edited by Anastasia Princesa Rastelli',
+  },
+  {
+    label: '"What People Say" Short Film',
+    href: 'https://youtu.be/06YwCKfKmJs?si=_DXWXYTkUrAgmEYV',
+    description: 'Directed, Written, and Edited by Anastasia Princesa Rastelli',
+  },
+]
+
 const disclosureButtonClass =
   'inline-flex max-w-full cursor-pointer items-center gap-1.5 rounded-md border border-[var(--accent)]/25 bg-[var(--surface)] px-2.5 py-1.5 text-left text-xs font-medium text-[var(--text)] shadow-sm outline-none transition hover:border-[var(--accent)]/45 hover:bg-[var(--elevated)] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--elevated)]'
 
@@ -144,6 +158,24 @@ function LinkedInIcon({ className }: { className?: string }) {
   )
 }
 
+function VideoIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.65"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="m10 9 6 3-6 3V9Z" />
+    </svg>
+  )
+}
+
 function ExpandChevron({ expanded, className }: { expanded: boolean; className?: string }) {
   return (
     <svg
@@ -165,6 +197,7 @@ function ExpandChevron({ expanded, className }: { expanded: boolean; className?:
 
 export function HomePage() {
   const [musicOpen, setMusicOpen] = useState(false)
+  const [videoOpen, setVideoOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
   const [projectsOpen, setProjectsOpen] = useState(false)
   const [webxrStagesOpen, setWebxrStagesOpen] = useState(false)
@@ -217,6 +250,7 @@ export function HomePage() {
                   type="button"
                   onClick={() => {
                     setMusicOpen(false)
+                    setVideoOpen(false)
                     setProjectsOpen(false)
                     setAboutOpen(true)
                   }}
@@ -234,6 +268,7 @@ export function HomePage() {
                   onClick={() => {
                     setAboutOpen(false)
                     setMusicOpen(false)
+                    setVideoOpen(false)
                     setProjectsOpen(true)
                   }}
                   className="flex flex-col items-center gap-3 rounded-2xl p-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--elevated)]"
@@ -250,6 +285,7 @@ export function HomePage() {
                   onClick={() => {
                     setAboutOpen(false)
                     setProjectsOpen(false)
+                    setVideoOpen(false)
                     setMusicOpen(true)
                   }}
                   className="flex flex-col items-center gap-3 rounded-2xl p-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--elevated)]"
@@ -258,6 +294,23 @@ export function HomePage() {
                     <HeadphonesIcon className="h-[3.25rem] w-[3.25rem] opacity-95" />
                   </span>
                   <span className="text-sm font-medium text-[var(--muted)]">Music</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAboutOpen(false)
+                    setProjectsOpen(false)
+                    setMusicOpen(false)
+                    setVideoOpen(true)
+                  }}
+                  className="flex flex-col items-center gap-3 rounded-2xl p-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--elevated)]"
+                >
+                  <span className="flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-[var(--elevated)] text-[var(--accent)] shadow-md dark:shadow-black/30">
+                    <VideoIcon className="h-[3.25rem] w-[3.25rem] opacity-95" />
+                  </span>
+                  <span className="text-sm font-medium text-[var(--muted)]">Video</span>
                 </button>
               </li>
               <li>
@@ -557,6 +610,34 @@ export function HomePage() {
           >
             Monti&apos;s Czardas - Smith Center performance
           </a>
+        </AppWindow>
+      ) : null}
+
+      {videoOpen ? (
+        <AppWindow title="Video" maxWidthClass="max-w-md" onClose={() => setVideoOpen(false)}>
+          {VIDEO_ITEMS.length === 0 ? (
+            <p className="m-0 leading-relaxed text-[var(--muted)]">
+              Selected video work will appear here as links soon.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {VIDEO_ITEMS.map(({ label, href, description }) => (
+                <div key={href} className="flex flex-col gap-1">
+                  <a
+                    href={href.startsWith('http') ? href : `${import.meta.env.BASE_URL}${href.replace(/^\//, '')}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="rounded-md border border-[var(--border)] px-3 py-2 font-medium text-[var(--text)] transition hover:bg-[var(--surface)]"
+                  >
+                    {label}
+                  </a>
+                  {description ? (
+                    <p className="m-0 px-1 text-xs leading-snug text-[var(--muted)]">{description}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
         </AppWindow>
       ) : null}
     </div>
